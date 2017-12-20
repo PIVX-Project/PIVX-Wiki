@@ -1,0 +1,15 @@
+script:
+- |
+  git config user.name "Fuzzbawls"
+  git config user.email "fuzzbawls@gmail.com"
+  git remote remove origin
+  git remote add origin https://$GITHUB_API_KEY@github.com/PIVX-Project/PIVX-Wiki.git > /dev/null 2>&1
+  git remote add upstream https://$GITHUB_API_KEY@github.com/PIVX-Project/PIVX.wiki.git > /dev/null 2>&1
+  git fetch origin
+  git fetch upstream
+  git merge upstream/master --no-edit
+  git push origin HEAD:master > /dev/null 2>&1
+  git push upstream HEAD:master > /dev/null 2>&1
+env:
+  matrix:
+    secure: f8RA0BfM/2w/vmL/hBlgwVAi3ETnOpgHFVw7Ls+MLhPT4qyGH0AL7RLzQSnzSk+ZvtDUTXyHUHXzZbUTrgIm+bN4X5S+pOZgKw8CqZMy68ttCm6/zBc3Vg6VGX7qZ0Pwa+aljm7GIbb6YBDRgQ8L0nm4V7Zl6hIK39iMSpQsNuk4ofPbZmq69bLMl0hKfC52AczRMAHAWCILZtKaJIUhkmOffYmqg7AJVzCbZp7C94QeLU3X3sDmfDOzbjTGwoR2TcupWEr1St6h2L7xarsar1yv3cEZCVlVQLp1Ys/jsXVdRINBDA7ivAAKIixS83mX+RCO55jEyH2pYN+fKJ/BNG2DzcwdAl40kgre4ZjxHq6+nyCShLYVDDDjen7/gvp8jBBPCvfLmntU6u8O2pYv0k2pk+kNeVGT6kcZIYXvwu+cRz+NfTRAicV/wwwvytjcEKh0509MKaHKqEnLeMNs8267ahJcYlhPtFkA55WlpEQTXo/Itds3+tCYWb9SVpkM4+x9qH8DCro+Bfv1X60GAsMUDAJKvsyzRJ4eyEaTJrPJtigDohHVhmCiw2Zbco89sfdiwBes2OIGMokDl7ALzVSLqgbVSZuEQxTeAe8757xg1B6SojSXlPFtMvPOTclnFFvMmhCC87JjjCOdTFFdqGaDw1yPu/syNllXZ7qMoLo=
