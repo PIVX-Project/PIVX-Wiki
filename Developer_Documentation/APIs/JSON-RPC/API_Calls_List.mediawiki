@@ -1,0 +1,326 @@
+PIVX API call list (as of version 3.0.6)
+
+== Common operations ==
+
+=== Listing my PIVX addresses ===
+
+Listing the PIVX [[address|addresses]] in your wallet is easily done via ''listreceivedbyaddress''. It normally lists only addresses which already have received transactions, however you can list all the addresses by setting the first argument to 0, and the second one to true.
+
+[[accounts explained|Accounts]] are used to organize addresses.
+
+== Full list ==
+
+Required arguments are denoted inside &lt; and &gt; Optional arguments are inside [ and ].
+
+{|class="wikitable"
+! Command !! Parameters !! Description !! Requires unlocked wallet?
+|-
+!colspan="4" | Blockchain
+|-
+| <code>getbestblockhash</code> || &nbsp; || Returns the hash of the best (tip) block in the longest block chain. || N
+|-
+| <code>getblock</code> || &lt;hash&gt; [verbose] || Returns information about the block with the given hash. || N
+|-
+| <code>getblockchaininfo</code> || &nbsp; || Returns an object containing various state info regarding block chain processing. || N
+|-
+| <code>getblockcount</code> || &nbsp; || Returns the number of blocks in the longest block chain. || N
+|-
+| <code>getblockhash</code> || &lt;index&gt; || Returns hash of block in best-block-chain at index provided. || N
+|-
+| <code>getblockheader</code> || &lt;hash&gt; [verbose] || If verbose is false, returns a string that is serialized, hex-encoded data for block 'hash' header. If verbose is true, returns an Object with information about block &lt;hash&gt; header. || N
+|-
+| <code>getchaintips</code> || &nbsp; || Return information about all known tips in the block tree, including the main chain as well as orphaned branches. || N
+|-
+| <code>getdifficulty</code> || &nbsp; || Returns the proof-of-work difficulty as a multiple of the minimum difficulty. || N
+|-
+| <code>getmempoolinfo</code> || &nbsp; || Returns details on the active state of the TX memory pool. || N
+|-
+| <code>getrawmempool</code> || [verbose] || Returns all transaction ids in memory pool as a json array of string transaction ids. || N
+|-
+| <code>gettxout</code> || &lt;txid&gt; &lt;n&gt; [includemempool=true] || Returns details about an unspent transaction output. || N
+|-
+| <code>gettxoutsetinfo</code> || &nbsp; || Returns statistics about the unspent transaction output set. || N
+|-
+| <code>invalidateblock</code> || &lt;hash&gt; || Permanently marks a block as invalid, as if it violated a consensus rule.|| N
+|-
+| <code>reconsiderblock</code> || &lt;hash&gt; || Removes invalidity status of a block and its descendants, reconsider them for activation.
+This can be used to undo the effects of invalidateblock. || N
+|-
+| <code>verifychain</code> || [numblocks=288] || Verifies blockchain database. || N
+|-
+!colspan="4" | Control
+|-
+| <code>getinfo</code> || &nbsp; || Returns an object containing various state info. || N
+|-
+| <code>help</code> || [command] || List all commands, or get help for a specified command. || N
+|-
+| <code>stop</code> || &nbsp; || Stop PIVX server. || N
+|-
+!colspan="4" | Generating
+|-
+| <code>getgenerate</code> || &nbsp; || '''PoW Only''' Return if the server is set to generate coins or not. The default is false. It is set with the command line argument -gen (or pivx.conf setting gen) It can also be set with the setgenerate call. || N
+|-
+| <code>setgenerate</code> || &lt;generate&gt; [genproclimit] || '''PoW Only''' Set 'generate' true or false to turn generation on or off. Generation is limited to 'genproclimit' processors, -1 is unlimited. See the getgenerate call for the current setting. || N
+|-
+!colspan="4" | Mining
+|-
+| <code>getblocktemplate</code> || [jsonrequestobject] || '''PoW Only''' Returns data needed to construct a block to work on. || N
+|-
+| <code>getmininginfo</code> || &nbsp; || '''PoW Only''' Returns a json object containing mining-related information. || N
+|-
+| <code>getnetworkhashps</code> || [blocks] [height] || '''PoW Only''' Returns the estimated network hashes per second based on the last n blocks. || N
+|-
+| <code>prioritisetransaction</code> || &lt;txid&gt; &lt;priority delta&gt; &lt;fee delta&gt; || Accepts the transaction into mined blocks at a higher (or lower) priority || N
+|-
+| <code>reservebalance</code> || [reserve] [amount] || Show or set the reserve amount not participating in network protection. If no parameters provided current setting is printed. || Y
+|-
+| <code>submitblock</code> || &lt;hexdata&gt; [jsonparamatersobject] || '''PoW Only''' Attempts to submit new block to network. || N
+|-
+!colspan="4" | Network
+|-
+| <code>addnode</code> || &lt;node&gt; &lt;add&#124;remove&#124;onetry&gt; || Attempts add or remove a node from the addnode list. Or try a connection to a node once. || N
+|-
+| <code>clearbanned</code> || &nbsp; || '''version 3.1.0''' Clear all banned IPs. || N
+|-
+| <code>disconnectnode</code> || &lt;node&gt; || '''version 3.1.0''' Immediately disconnects from the specified node. || N
+|-
+| <code>getaddednodeinfo</code> || &lt;dns&gt; [node] || Returns information about the given added node, or all added nodes.
+(note that onetry addnodes are not listed here)
+If dns is false, only a list of added nodes will be provided,
+otherwise connected information will also be available. || N
+|-
+| <code>getconnectioncount</code> || &nbsp; || Returns the number of connections to other nodes. || N
+|-
+| <code>getnettotals</code> || &nbsp; || Returns information about network traffic, including bytes in, bytes out, and current time. || N
+|-
+| <code>getnetworkinfo</code> || &nbsp; || Returns an object containing various state info regarding P2P networking. || N
+|-
+| <code>getpeerinfo</code> || &nbsp; || Returns data about each connected network node as a json array of objects. || N
+|-
+| <code>listbanned</code> || &nbsp; || '''version 3.1.0''' List all banned IPs/Subnets. || N
+|-
+| <code>ping</code> || &nbsp; || Requests that a ping be sent to all other nodes, to measure ping time. || N
+|-
+| <code>setban</code> || &lt;ip(/netmask)&gt; &lt;add&#124;remove&gt; [bantime] [absolute] || '''version 3.1.0''' Attempts add or remove a IP/Subnet from the banned list. || N
+|-
+!colspan="4" | PIVX
+|-
+| <code>checkbudgets</code> || &nbsp; || Initiates a buddget check cycle manually. || N
+|-
+| <code>createmasternodekey</code> || &nbsp; || Create a new masternode private key. || N
+|-
+| <code>getbudgetinfo</code> || [proposal] || Show current masternode budgets with optional filter by proposal name. || N
+|-
+| <code>getbudgetprojection</code> || &nbsp; || Show the projection of which proposals will be paid the next cycle. || N
+|-
+| <code>getbudgetvotes</code> || &lt;proposal&gt; || Print vote information for a budget proposal. || N
+|-
+| <code>getmasternodecount</code> || &nbsp; || Get masternode count values. || N
+|-
+| <code>getmasternodeoutputs</code> || &nbsp; || Print all masternode transaction outputs. || N
+|-
+| <code>getmasternodescores</code> || [blocks=10] || Print list of winning masternode by score. || N
+|-
+| <code>getmasternodestatus</code> || &nbsp; || Print masternode status. || N
+|-
+| <code>getmasternodewinners</code> || [blocks=10] [filter] || Print the masternode winners for the last ''n'' blocks || N
+|-
+| <code>getnextsuperblock</code> || &nbsp; || Print the next super block height || N
+|-
+| <code>getpoolinfo</code> || &nbsp; || '''Depreciated in version 3.0.0''' Returns anonymous pool-related information || N
+|-
+| <code>listmasternodeconf</code> || [filter] || Print masternode.conf in JSON format. || N
+|-
+| <code>listmasternodes</code> || [filter] || Get a ranked list of masternodes. Optional filter by txhash, status, or payment address. || N
+|-
+| <code>masternode</code> || &lt;command&gt; || '''Depreciated in version 2.3.1''' Set of commands to execute masternode related actions. || Y/N
+|-
+| <code>masternodeconnect</code> || &lt;address&gt; || Attempts to connect to specified masternode address. || N
+|-
+| <code>masternodecurrent</code> || &nbsp || Get current masternode winner. || N
+|-
+| <code>masternodedebug</code> || &nbsp || Print masternode status. || N
+|-
+| <code>mnbudget</code> || &lt;command&gt; [passphrase] || '''Depreciated in version 2.3.1''' Vote or show current budgets. || N
+|-
+| <code>mnbudgetrawvote</code> || &lt;masternode-tx-hash&gt; &lt;masternode-tx-index&gt; &lt;proposal-hash&gt; &lt;yes&#124;no&gt; &lt;time&gt; &lt;vote-sig&gt; || Compile and relay a proposal vote with provided external signature instead of signing vote internally. || N
+|-
+| <code>mnbudgetvote</code> || &lt;local&#124;many&#124;alias&gt; &lt;votehash&gt; &lt;yes&#124;no&gt; [alias] || Vote on a budget proposal. || N
+|-
+| <code>mnfinalbudget</code> || &lt;command&gt; [passphrase] || Vote or show current budgets. || Y/N
+|-
+| <code>mnsync</code> || &lt;status&#124;reset&gt; || Returns the sync status or resets sync. || N
+|-
+| <code>preparebudget</code> || &lt;proposal-name&gt; &lt;url&gt; &lt;payment-count&gt; &lt;block-start&gt; &lt;pivx-address&gt; &lt;monthly-payment&gt; || Prepare proposal for network by signing and creating tx. || Y
+|-
+| <code>spork</code> || &lt;show&#124;active&gt; || Print raw value or active status of sporks. || N
+|-
+| <code>startmasternode</code> || &lt;local&#124;all&#124;many&#124;missing&#124;disabled&#124;alias&gt; &lt;lockwallet&gt; [alias] || Attempts to start one or more masternode(s). || Y/N
+|-
+| <code>submitbudget</code> || &lt;proposal-name&gt; &lt;url&gt; &lt;payment-count&gt; &lt;block-start&gt; &lt;pivx-address&gt; &lt;monthly-payment&gt; &lt;fee-tx&gt; || Submit proposal to the network. || N
+|-
+!colspan="4" | Raw Transactions
+|-
+| <code>createrawtransaction</code> || [{"txid":txid,"vout":n},...] {address:amount,...} || Creates a [[Raw Transactions|raw transaction]] spending given inputs. || N
+|-
+| <code>decoderawtransaction</code> || &lt;hex string&gt; || Produces a human-readable JSON object for a [[Raw Transactions|raw transaction]]. || N
+|-
+| <code>decodescript</code> || &lt;hex&gt; || Decode a hex-encoded script. || N
+|-
+| <code>getrawtransaction</code> || &lt;txid&gt; [verbose=0] || Returns [[Raw Transactions|raw transaction]] representation for given transaction id. || N
+|-
+| <code>sendrawtransaction</code> || &lt;hexstring&gt; [allowhighfees=false] [swiftx=false] || Submits raw transaction (serialized, hex-encoded) to local node and network. || N
+|-
+| <code>signrawtransaction</code> || &lt;hexstring&rt; [{"txid":txid,"vout":n,"scriptPubKey":hex},...] [&lt;privatekey1&gt;,...] [sighashtype=ALL] || Adds signatures to a [[Raw Transactions|raw transaction]] and returns the resulting raw transaction. || Y/N
+|-
+!colspan="4" | Utility
+|-
+| <code>createmultisig</code> || &lt;nrequired&gt; &lt;'["key",...]'&gt; || Creates a multi-signature address with n signature of m keys required. || N
+|-
+| <code>estimatefee</code> || &lt;nblocks&gt; || Estimates the approximate fee per kilobyte needed for a transaction to begin confirmation within nblocks blocks. || N
+|-
+| <code>estimatepriority</code> || &lt;nblocks&gt; || Estimates the approximate priority a zero-fee transaction needs to begin confirmation within nblocks blocks. || N
+|-
+| <code>validateaddress</code> || &lt;pivxaddress&gt; || Return information about the given pivx address. || N
+|-
+| <code>verifymessage</code> || &lt;pivxaddress&gt; &lt;signature&gt; &lt;message&gt; || Verify a signed message. || N
+|-
+!colspan="4" | Wallet
+|-
+| <code>addmultisigaddress</code> || &lt;nrequired&gt; &lt;'["key",...]'&gt; [account] || Add a nrequired-to-sign multisignature address to the wallet.
+Each key is a PIVX address or hex-encoded public key.
+If 'account' is specified, assign address to that account. || Y/N
+|-
+| <code>autocombinerewards</code> || &lt;true&#124;false&gt; [threshold] || Wallet will automatically monitor for any coins with value below the threshold amount, and combine them if they reside with the same PIVX address. || Y
+|-
+| <code>backupwallet</code> || &lt;destination&gt; || Safely copies wallet.dat to destination, which can be a directory or a path with filename. || N
+|-
+| <code>bip38decrypt</code> || &lt;pivxaddress&gt; &lt;passphrase&gt; || Decrypts and then imports password protected private key. || Y
+|-
+| <code>bip38encrypt</code> || &lt;pivxaddress&gt; &lt;passphrase&gt; || Encrypts a private key corresponding to 'pivxaddress'. || Y
+|-
+| <code>dumpprivkey</code> || &lt;pivxaddress&gt; || Reveals the private key corresponding to 'pivxaddress'. || Y
+|-
+| <code>dumpwallet</code> || &lt;filename&gt; || Dumps all wallet keys in a human-readable format. || Y
+|-
+| <code>encryptwallet</code> || &lt;passphrase&gt; || Encrypts the wallet with &lt;passphrase&gt;. || N
+|-
+| <code>getaccount</code> || &lt;pivxaddress&gt; || Returns the account associated with the given address. || N
+|-
+| <code>getaccountaddress</code> || &lt;account&gt; || Returns the current bitcoin address for receiving payments to this account. If &lt;account&gt; does not exist, it will be created along with an associated new address that will be returned. || N
+|-
+| <code>getaddressesbyaccount</code> || &lt;account&gt; || Returns the list of addresses for the given account. || N
+|-
+| <code>getbalance</code> || [account] [minconf=1] [includeWatchonly=false] || If [account] is not specified, returns the server's total available balance.<br/>If [account] is specified, returns the balance in the account. || N
+|-
+| <code>getnewaddress</code> || [account] || Returns a new PIVX address for receiving payments.  If [account] is specified payments received with the address will be credited to [account]. || Y
+|-
+| <code>getrawchangeaddress</code> || &nbsp; || Returns a new PIVX address, for receiving change.  This is for use with raw transactions, NOT normal use. || N
+|-
+| <code>getreceivedbyaccount</code> || [account] [minconf=1] || Returns the total amount received by addresses with [account] in transactions with at least [minconf] confirmations. If [account] not provided return will include all transactions to all accounts. || N
+|-
+| <code>getreceivedbyaddress</code> || &lt;pivxaddress&gt; [minconf=1] || Returns the amount received by &lt;pivxaddress&gt; in transactions with at least [minconf] confirmations. It correctly handles the case where someone has sent to the address in multiple transactions. Keep in mind that addresses are only ever used for receiving transactions. Works only for addresses in the local wallet, external addresses will always show 0. || N
+|-
+| <code>getstakesplitthreshold</code> || &nbsp || Returns the threshold for stake splitting. || N
+|-
+| <code>getstakingstatus</code> || &nbsp || Returns an object containing various staking information. || N
+|-
+| <code>gettransaction</code> || &lt;txid&gt; [includeWatchonly] || Get detailed information about in-wallet transaction &lt;txid&gt;. || N
+|-
+| <code>getunconfirmedbalance</code> || &nbsp; || Returns the server's total unconfirmed balance
+. || N
+|-
+| <code>getwalletinfo</code> || &nbsp; || Returns an object containing various wallet state info. || N
+|-
+| <code>importaddress</code> || &lt;address&gt; [label] [rescan=true] || Adds an address or script (in hex) that can be watched as if it were in your wallet but cannot be used to spend. || Y
+|-
+| <code>importprivkey</code> || &lt;pivxprivkey&gt; [label] [rescan=true] || Adds a private key (as returned by dumpprivkey) to your wallet. || Y
+|-
+| <code>importwallet</code> || &lt;filename&gt; || Imports keys from a wallet dump file (see dumpwallet). || Y
+|-
+| <code>keypoolrefill</code> || &lt;newsize&gt; || Fills the keypool. || Y
+|-
+| <code>listaccounts</code> || [minconf] [includeWatchonly=false] || Returns Object that has account names as keys, account balances as values. || N
+|-
+| <code>listaddressgroupings</code> || &nbsp; || Returns all addresses in the wallet and info used for coincontrol. || N
+|-
+| <code>listlockunspent</code> || &nbsp; || Returns list of temporarily unspendable outputs. || N
+|-
+| <code>listreceivedbyaccount</code> || [minconf=1] [includeempty=false] [includeWatchonly=false] || List balances by account. || N
+|-
+| <code>listreceivedbyaddress</code> || [minconf=1] [includeempty=false] [includeWatchonly=false] || List balances by receiving address. || N
+|-
+| <code>listsinceblock</code> || [blockhash] [target-confirmations] [includeWatchonly=false] || Get all transactions in blocks since block [blockhash], or all transactions if omitted. || N
+|-
+| <code>listtransactions</code> || [account] [count=10] [from=0] [includeWatchonly=false] || Returns up to [count] most recent transactions skipping the first [from] transactions for account [account]. If [account] not provided it'll return recent transactions from all accounts.
+|| N
+|-
+| <code>listunspent</code> || [minconf=1] [maxconf=999999] ['["addresses",...]'] || Returns array of unspent transaction outputs with between minconf and maxconf (inclusive) confirmations. Optionally filter to only include txouts paid to specified addresses. || N
+|-
+| <code>lockunspent</code> || &lt;unlock&gt; &lt;'[{"txid":"txid","vout":n},...]'&gt; || Updates list of temporarily unspendable outputs. || Y
+|-
+| <code>move</code> || &lt;fromaccount&gt; &lt;toaccount&gt; &lt;amount&gt; [minconf=1] [comment] || Move from one account in your wallet to another || N
+|-
+| <code>sendfrom</code> || &lt;fromaccount&gt; &lt;topivxaddress&gt; &lt;amount&gt; [minconf=1] [comment] [comment-to] || &lt;amount&gt; is a real and is rounded to 8 decimal places. Will send the given amount to the given address, ensuring the account has a valid balance using [minconf] confirmations. Returns the transaction ID if successful (not in JSON object). || Y
+|-
+| <code>sendmany</code> || &lt;fromaccount&gt; {address:amount,...} [minconf=1] [comment] || Send multiple times. Amounts are double-precision floating point numbers || Y
+|-
+| <code>sendtoaddress</code> || &lt;pivxaddress&gt; &lt;amount&gt; [comment] [comment-to] || Send an amount to a given address. &lt;amount&gt; is a real and is rounded to 8 decimal places. Returns the transaction ID &lt;txid&gt; if successful. || Y
+|-
+| <code>sendtoaddressix</code> || &lt;pivxaddress&gt; &lt;amount&gt; [comment] [comment-to] || Send an amount to a given address using SwiftX. &lt;amount&gt; is a real and is rounded to 8 decimal places. Returns the transaction ID &lt;txid&gt; if successful. || Y
+|-
+| <code>setaccount</code> || &lt;pivxaddress&gt; &lt;account&gt; || Sets the account associated with the given address. Assigning address that is already assigned to the same account will create a new address associated with that account. || N
+|-
+| <code>setstakesplitthreshold</code> || &lt;value&gt; || This will set the output size of your stakes to never be below the given value. || Y
+|-
+| <code>settxfee</code> || &lt;amount&gt; || Set the transaction fee per kB. || N
+|-
+| <code>signmessage</code> || &lt;pivxaddress&gt; &lt;message&gt; || Sign a message with the private key of an address. || Y
+|-
+| <code>walletlock</code> || &nbsp; || Removes the wallet encryption key from memory, locking the wallet. || Y
+|-
+| <code>walletpassphrase</code> || &lt;passphrase&gt; &lt;timeout&gt; [anonymizeonly=false] || Stores the wallet decryption key in memory for 'timeout' seconds. || N
+|-
+| <code>walletpassphrasechange</code> || &lt;oldpassphrase&gt; &lt;newpassphrase&gt; || Changes the wallet passphrase from 'oldpassphrase' to 'newpassphrase'. || N
+|-
+!colspan="4" | Zerocoin
+|-
+| <code>exportzerocoins</code> || &lt;include_spent&gt; [denomination] || Exports zerocoin mints that are held by this wallet.dat || Y
+|-
+| <code>getarchivedzerocoin</code> || &nbsp; || Display zerocoins that were archived because they were believed to be orphans. || Y
+|-
+| <code>getspentzerocoinamount</code> || &lt;hexstring&gt; &lt;index&gt; || Returns value of spent zerocoin output designated by transaction hash and input index. || N
+|-
+| <code>getzerocoinbalance</code> || &nbsp; || Returns the balance of all unspent zerocoins in this wallet. || Y
+|-
+| <code>importzerocoins</code> || &lt;importdata&gt; || Import zerocoin mints. Adds raw zerocoin mints to the wallet.dat.
+Note it is recommended to use the json export created from the exportzerocoins RPC call || Y
+|-
+| <code>listmintedzerocoins</code> || &nbsp; || Return an array of zerocoin mints. || Y
+|-
+| <code>listspentzerocoins</code> || &nbsp; || Return an array of spent zerocoins. || Y
+|-
+| <code>listzerocoinamounts</code> || &nbsp; || List the denomination amounts held in this wallet. || Y
+|-
+| <code>mintzerocoin</code> || &lt;amount&gt; || Mint given amount from PIV to zPIV. || Y
+|-
+| <code>reconsiderzerocoins</code> || &nbsp; || Check archived zPiv list to see if any mints were added to the blockchain.. || Y
+|-
+| <code>resetmintzerocoin</code> || [extended_search] || Scan the blockchain for all of the zerocoins that are held in the wallet.dat. Update any meta-data that is incorrect. || Y
+|-
+| <code>resetspentzerocoin</code> || &nbsp; || Scan the blockchain for all of the zerocoins that are held in the wallet.dat. Reset mints that are considered spent that did not make it into the blockchain. || Y
+|-
+| <code>spendzerocoin</code> || &lt;amount&gt; &lt;mintchange&gt; &lt;minimizechange&gt; &lt;seclevel&gt; &lt;address&gt; || Spend zPIV to given address with optional reminting of change. || Y
+|}
+
+==Error Codes==
+
+See [https://github.com/bitcoin/bitcoin/blob/62f2d769e45043c1f262ed45babb70fe237ad2bb/src/rpc/protocol.h#L30 rpcprotocol.h] for the list of error codes and their meanings.
+
+==See Also==
+
+* [[API reference (JSON-RPC)]]
+* [http://code.gogulski.com/bitcoin-php/class_bitcoin_client.html PHP BitcoinClient Class Reference]
+
+==References==
+<references />
