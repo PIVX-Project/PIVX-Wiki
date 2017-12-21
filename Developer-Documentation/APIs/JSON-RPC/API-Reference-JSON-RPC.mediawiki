@@ -549,8 +549,7 @@ int main(int argc, char **argv)
 == See Also==
 
 * [[API Calls list|API calls list]]
-* [[Running Bitcoin]]
-* [[Lazy API]]
+* [[Running PIVX]]
 * [[PHP developer intro]]
 * [[Raw Transactions|Raw Transactions API]]
 * [https://gourl.io/bitcoin-payment-gateway-api.html GoUrl Bitcoin PHP Payment API]

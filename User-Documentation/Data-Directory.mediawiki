@@ -52,7 +52,7 @@ An overview of these is in [https://github.com/pivx-project/pivx/blob/master/doc
 * .lock
 ** PIVX data directory lock file
 * pivx.conf [optional]
-**Contains [[Running-PIVX#Pivx.conf-Configuration-File|configuration options]].
+**Contains [[Running-PIVX#Pivxconf_Configuration_File|configuration options]].
 * __db.''xxx''
 **Used by BDB
 * db.log
