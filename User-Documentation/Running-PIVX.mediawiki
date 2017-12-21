@@ -1,0 +1,459 @@
+There are two variations of the PIVX program available; one with a graphical user interface (usually referred to as just PIVX), and a 'headless' version (called [[pivxd]]). They are completely compatible with each other, and take the same command-line arguments, read the same configuration file, and read and write the same data files. You can run one copy of either PIVX or pivxd on your system at a time (if you accidently try to launch another, the copy will let you know that PIVX or pivxd is already running and will exit).
+
+__TOC__
+
+==Linux Quickstart==
+
+The simplest way to start from scratch with the command line client, automatically syncing blockchain and creating a wallet, is to just run this command (without arguments) from the directory containing your pivxd binary:
+
+  ./pivxd
+
+To run with the standard GUI interface:
+
+  ./pivx-qt
+
+==Command-line arguments==
+
+These commands are accurate as of PIVX Core version '''v3.0.6'''.
+
+{| style="valign:top;"
+! scope="col" style="width: 20pt;border: 0px" |
+! scope="col" style="width: 150pt;" | Command
+! scope="col" | Description
+|-
+| &nbsp; || -? || Print this help message and exit
+|-
+| &nbsp; || -version || Print version and exit
+|-
+| &nbsp; || -alertnotify=&lt;cmd&gt; || Execute command when a relevant alert is received or we see a really long fork (%s in cmd is replaced by message)
+|-
+| &nbsp; || -alerts || Receive and display P2P network alerts (default: 1)
+|-
+| &nbsp; || -blocknotify=&lt;cmd&gt; || Execute command when the best block changes (%s in cmd is replaced by block hash)
+|-
+| &nbsp; || -checkblocks=&lt;n&gt; || How many blocks to check at startup (default: 500, 0 = all)
+|-
+| &nbsp; || -conf=&lt;file&gt; || Specify configuration file (default: pivx.conf)
+|-
+| &nbsp; || -datadir=&lt;dir&gt; || Specify data directory
+|-
+| &nbsp; || -dbcache=&lt;n&gt; || Set database cache size in megabytes (4 to 4096, default: 100)
+|-
+| &nbsp; || -loadblock=&lt;file&gt; || Imports blocks from external blk000??.dat file on startup
+|-
+| &nbsp; || -maxreorg=&lt;n&gt; || Set the Maximum reorg depth (default: 100)
+|-
+| &nbsp; || -maxorphantx=&lt;n&gt; || Keep at most &lt;n&gt; unconnectable transactions in memory (default: 100)
+|-
+| &nbsp; || -par=&lt;n&gt; || Set the number of script verification threads (-8 to 16, 0 = auto, &lt;0 = leave that many cores free, default: 0)
+|-
+| &nbsp; || -pid=&lt;file&gt; || Specify pid file (default: pivxd.pid)
+|-
+| &nbsp; || -reindex || Rebuild block chain index from current blk000??.dat files on startup
+|-
+| &nbsp; || -reindexaccumulators || Reindex the accumulator database on startup
+|-
+| &nbsp; || -reindexmoneysupply || Reindex the PIV and zPIV money supply statistics on startup
+|-
+| &nbsp; || -resync || Delete blockchain folders and resync from scratch on startup
+|-
+| &nbsp; || -sysperms || Create new files with system default permissions, instead of umask 077 (only effective with disabled wallet functionality)
+|-
+| &nbsp; || -txindex || Maintain a full transaction index, used by the getrawtransaction rpc call (default: 1)
+|-
+| &nbsp; || -forcestart || Attempt to force blockchain corruption recovery on startup
+|-
+|-
+| colspan="3" | <br /> '''Connection options:'''
+|-
+| &nbsp; || -addnode=&lt;ip&gt; || Add a node to connect to and attempt to keep the connection open
+|-
+| &nbsp; || -banscore=&lt;n&gt; || Threshold for disconnecting misbehaving peers (default: 100)
+|-
+| &nbsp; || -bantime=&lt;n&gt; || Number of seconds to keep misbehaving peers from reconnecting (default: 86400)
+|-
+| &nbsp; || -bind=&lt;addr&gt; || Bind to given address and always listen on it. Use [host]:port notation for IPv6
+|-
+| &nbsp; || -connect=&lt;ip&gt; || Connect only to the specified node(s)
+|-
+| &nbsp; || -discover || Discover own IP address (default: 1 when listening and no -externalip)
+|-
+| &nbsp; || -dns || Allow DNS lookups for -addnode, -seednode and -connect (default: 1)
+|-
+| &nbsp; || -dnsseed || Query for peer addresses via DNS lookup, if low on addresses (default: 1 unless -connect)
+|-
+| &nbsp; || -externalip=&lt;ip&gt; || Specify your own public address
+|-
+| &nbsp; || -forcednsseed || Always query for peer addresses via DNS lookup (default: 0)
+|-
+| &nbsp; || -listen || Accept connections from outside (default: 1 if no -proxy or -connect)
+|-
+| &nbsp; || -listenonion || Automatically create Tor hidden service (default: 1)
+|-
+| &nbsp; || -maxconnections=&lt;n&gt; || Maintain at most &lt;n&gt; connections to peers (default: 125)
+|-
+| &nbsp; || -maxreceivebuffer=&lt;n&gt; || Maximum per-connection receive buffer, &lt;n&gt;*1000 bytes (default: 5000)
+|-
+| &nbsp; || -maxsendbuffer=&lt;n&gt; || Maximum per-connection send buffer, &lt;n&gt;*1000 bytes (default: 1000)
+|-
+| &nbsp; || -onion=&lt;ip:port&gt; || Use separate SOCKS5 proxy to reach peers via Tor hidden services (default: -proxy)
+|-
+| &nbsp; || -onlynet=&lt;net&gt; || Only connect to nodes in network &lt;net&gt; (ipv4, ipv6 or onion)
+|-
+| &nbsp; || -permitbaremultisig || Relay non-P2SH multisig (default: 1)
+|-
+| &nbsp; || -peerbloomfilters || Support filtering of blocks and transaction with bloom filters (default: 1)
+|-
+| &nbsp; || -port=&lt;port&gt; || Listen for connections on &lt;port&gt; (default: 51472 or testnet: 51474)
+|-
+| &nbsp; || -proxy=&ltip:port&gt; || Connect through SOCKS5 proxy
+|-
+| &nbsp; || -proxyrandomize || Randomize credentials for every proxy connection. This enables Tor stream isolation (default: 1)
+|-
+| &nbsp; || -seednode=&lt;ip&gt; || Connect to a node to retrieve peer addresses, and disconnect
+|-
+| &nbsp; || -timeout=&lt;n&gt; || Specify connection timeout in milliseconds (minimum: 1, default: 5000)
+|-
+| &nbsp; || -torcontrol=&lt;ip:port&gt; || Tor control port to use if onion listening enabled (default: 127.0.0.1:9051)
+|-
+| &nbsp; || -torpassword=&lt;pass&gt; || Tor control port password (default: empty)
+|-
+| &nbsp; || -upnp || Use UPnP to map the listening port (default: 0)
+|-
+| &nbsp; || -whitebind=&lt;addr&gt; || Bind to given address and whitelist peers connecting to it. Use [host]:port notation for IPv6
+|-
+| &nbsp; || -whitelist=&lt;netmask&gt; || Whitelist peers connecting from the given netmask or IP address. Can be specified multiple times. Whitelisted peers cannot be DoS banned and their transactions are always relayed, even if they are already in the mempool, useful e.g. for a gateway
+|-
+|-
+| colspan="3" | <br /> '''Wallet options:'''
+|-
+| &nbsp; || -createwalletbackups=&lt;n&gt; || Number of automatic wallet backups (default: 10)
+|-
+| &nbsp; || -disablewallet || Do not load the wallet and disable wallet RPC calls
+|-
+| &nbsp; || -keypool=&lt;n&gt; || Set key pool size to <n> (default: 1000)
+|-
+| &nbsp; || -paytxfee=&lt;amt&gt; || Fee (in PIV/kB) to add to transactions you send (default: 0.0001)
+|-
+| &nbsp; || -rescan || Rescan the block chain for missing wallet transactions on startup
+|-
+| &nbsp; || -salvagewallet || Attempt to recover private keys from a corrupt wallet.dat on startup
+|-
+| &nbsp; || -sendfreetransactions || Send transactions as zero-fee transactions if possible (default: 0)
+|-
+| &nbsp; || -spendzeroconfchange || Spend unconfirmed change when sending transactions (default: 0)
+|-
+| &nbsp; || -disablesystemnotifications || Disable OS notifications for incoming transactions (default: 0)
+|-
+| &nbsp; || -txconfirmtarget=&lt;n&gt; || If paytxfee is not set, include enough fee so transactions begin confirmation on average within n blocks (default: 1)
+|-
+| &nbsp; || -maxtxfee=&lt;amn&gt; || Maximum total fees to use in a single wallet transaction, setting too low may abort large transactions (default: 1.00)
+|-
+| &nbsp; || -upgradewallet || Upgrade wallet to latest format on startup
+|-
+| &nbsp; || -wallet=&lt;file&gt; || Specify wallet file (within data directory) (default: wallet.dat)
+|-
+| &nbsp; || -walletnotify=&lt;cmd&gt; || Execute command when a wallet transaction changes (%s in cmd is replaced by TxID)
+|-
+| &nbsp; || -windowtitle=&lt;name&gt; || Wallet window title
+|-
+| &nbsp; || -zapwallettxes=&lt;mode&gt; || Delete all wallet transactions and only recover those parts of the blockchain through -rescan on startup (1 = keep tx meta data e.g. account owner and payment request information, 2 = drop tx meta data)
+|-
+|-
+| colspan="3" | <br /> '''ZeroMQ notification options:'''
+|-
+| &nbsp; || -zmqpubhashblock=&lt;address&gt; || Enable publish hash block in &lt;address&gt;
+|-
+| &nbsp; || -zmqpubhashtx=&lt;address&gt; || Enable publish hash transaction in &lt;address&gt;
+|-
+| &nbsp; || -zmqpubhashtxlock=&lt;address&gt; || Enable publish hash transaction (locked via SwiftX) in &lt;address&gt;
+|-
+| &nbsp; || -zmqpubrawblock=&lt;address&gt; || Enable publish raw block in &lt;address&gt;
+|-
+| &nbsp; || -zmqpubrawtx=&lt;address&gt; || Enable publish raw transaction in &lt;address&gt;
+|-
+| &nbsp; || -zmqpubrawtxlock=&lt;address&gt; || Enable publish raw transaction (locked via SwiftX) in &lt;address&gt;
+|-
+|-
+| colspan="3" | <br /> '''Debugging/Testing options:'''
+|-
+| &nbsp; || -debug=&lt;category&gt; || Output debugging information (default: 0, supplying &lt;category&gt; is optional). If &lt;category&gt; is not supplied, output all debugging information.&lt;category&gt; can be: addrman, alert, bench, coindb, db, lock, rand, rpc, selectcoins, tor, mempool, net, proxy, pivx, (obfuscation, swiftx, masternode, mnpayments, mnbudget, zero), qt.
+|-
+| &nbsp; || -gen || Generate coins (default: 0)
+|-
+| &nbsp; || -genproclimit || Set the number of threads for coin generation if enabled (-1 = all cores, default: 1)
+|-
+| &nbsp; || -help-debug || Show all debugging options (usage: --help -help-debug)
+|-
+| &nbsp; || -logips || Include IP addresses in debug output (default: 0)
+|-
+| &nbsp; || -logtimestamps || Prepend debug output with timestamp (default: 1)
+|-
+| &nbsp; || -minrelaytxfee=&lt;amt&gt; || Fees (in PIV/Kb) smaller than this are considered zero fee for relaying (default: 0.0001)
+|-
+| &nbsp; || -printtoconsole || Send trace/debug info to console instead of debug.log file (default: 0)
+|-
+| &nbsp; || -shrinkdebugfile || Shrink debug.log file on client startup (default: 1 when no -debug)
+|-
+| &nbsp; || -testnet || Use the test network
+|-
+| &nbsp; || -litemode=&lt;n&gt; || Disable all PIVX specific functionality (Masternodes, Zerocoin, SwiftX, Budgeting) (0-1, default: 0)
+|-
+|-
+| colspan="3" | <br /> '''Staking options:'''
+|-
+| &nbsp; || -staking=&lt;n&gt; || Enable staking functionality (0-1, default: 1)
+|-
+| &nbsp; || -reservebalance=&lt;amt&gt; || Keep the specified amount available for spending at all times (default: 0)
+|-
+|-
+| colspan="3" | <br /> '''Masternode options:'''
+|-
+| &nbsp; || -masternode=&lt;n&gt; || Enable the client to act as a masternode (0-1, default: 0)
+|-
+| &nbsp; || -mnconf=&lt;file&gt; || Specify masternode configuration file (default: masternode.conf)
+|-
+| &nbsp; || -mnconflock=&lt;n&gt; || Lock masternodes from masternode configuration file (default: 1)
+|-
+| &nbsp; || -masternodeprivkey=&lt;privkey&gt; || Set the masternode private key
+|-
+| &nbsp; || -masternodeaddr=&lt;addr&gt; || Set external address:port to get to this masternode (example: 128.127.106.235:51472)
+|-
+| &nbsp; || -budgetvotemode=&lt;mode&gt; || Change automatic finalized budget voting behavior. mode=auto: Vote for only exact finalized budget match to my generated budget. (string, default: auto)
+|-
+|-
+| colspan="3" | <br /> '''Zerocoin options:'''
+|-
+| &nbsp; || -enablezeromint=&lt;n&gt; || Enable automatic Zerocoin minting (0-1, default: 1)
+|-
+| &nbsp; || -zeromintpercentage=&lt;n&gt; || Percentage of automatically minted Zerocoin (10-100, default: 10)
+|-
+| &nbsp; || -preferredDenom=&lt;n&gt; || Preferred Denomination for automatically minted Zerocoin (1/5/10/50/100/500/1000/5000), 0 for no preference. default: 0)
+|-
+| &nbsp; || -backupzpiv=&lt;n&gt; || Enable automatic wallet backups triggered after each zPiv minting (0-1, default: 1)
+|-
+|-
+| colspan="3" | <br /> '''SwiftX options:'''
+|-
+| &nbsp; || -enableswifttx=&lt;n&gt; || Enable SwiftX, show confirmations for locked transactions (bool, default: true)
+|-
+| &nbsp; || -swifttxdepth=&lt;n&gt; || Show N confirmations for a successfully locked transaction (0-9999, default: 5)
+|-
+|-
+| colspan="3" | <br /> '''Node relay options:'''
+|-
+| &nbsp; || -datacarrier || Relay and mine data carrier transactions (default: 1)
+|-
+| &nbsp; || -datacarriersize=&lt;n&gt; || Maximum size of data in data carrier transactions we relay and mine (default: 83)
+|-
+|-
+| colspan="3" | <br /> '''Block creation options:'''
+|-
+| &nbsp; || -blockminsize=&lt;n&gt; || Set minimum block size in bytes (default: 0)
+|-
+| &nbsp; || -blockmaxsize=&lt;n&gt; || Set maximum block size in bytes (default: 750000)
+|-
+| &nbsp; || -blockprioritysize=&lt;n&gt; || Set maximum size of high-priority/low-fee transactions in bytes (default: 50000)
+|-
+|-
+| colspan="3" | <br /> '''RPC server options:'''
+|-
+| &nbsp; || -server || Accept command line and JSON-RPC commands
+|-
+| &nbsp; || -rest || Accept public REST requests (default: 0)
+|-
+| &nbsp; || -rpcbind=&lt;addr&gt; || Bind to given address to listen for JSON-RPC connections. Use [host]:port notation for IPv6. This option can be specified multiple times (default: bind to all interfaces)
+|-
+| &nbsp; || -rpcuser=&lt;user&gt; || Username for JSON-RPC connections
+|-
+| &nbsp; || -rpcpassword=&lt;pw&gt; || Password for JSON-RPC connections
+|-
+| &nbsp; || -rpcport=&lt;port&gt; || Listen for JSON-RPC connections on <port> (default: 51473 or testnet: 51475)
+|-
+| &nbsp; || -rpcallowip=&lt;ip&gt; || Allow JSON-RPC connections from specified source. Valid for &lt;ip&gt; are a single IP (e.g. 1.2.3.4), a network/netmask (e.g. 1.2.3.4/255.255.255.0) or a network/CIDR (e.g. 1.2.3.4/24). This option can be specified multiple times
+|-
+| &nbsp; || -rpcthreads=&lt;n&gt; || Set the number of threads to service RPC calls (default: 4)
+|-
+| &nbsp; || -rpckeepalive || RPC support for HTTP persistent connections (default: 1)
+|-
+|-
+| colspan="3" | <br /> '''UI Options:'''
+|-
+| &nbsp; || -choosedatadir || Choose data directory on startup (default: 0)
+|-
+| &nbsp; || -lang=&lt;lang&gt; || Set language, for example "de_DE" (default: system locale)
+|-
+| &nbsp; || -min || Start minimized
+|-
+| &nbsp; || -rootcertificates=&lt;file&gt; || Set SSL root certificates for payment request (default: -system-)
+|-
+| &nbsp; || -splash || Show splash screen on startup (default: 1)
+|}
+
+Many of the boolean options can also be set to off by specifying them with a "no" prefix: e.g. -nodnseed.
+
+==Pivx.conf Configuration File==
+All command-line options (except for -conf) may be specified in a configuration file, and all configuration file options may also be specified on the command line. Command-line options override values set in the configuration file.
+
+The configuration file is a list of setting=value pairs, one per line, with optional comments starting with the '#' character.
+
+An empty configuration file is automatically created on first run. By default, PIVX (or pivxd) will look for a file named 'pivx.conf' in the PIVX [[data directory]], but both the data directory and the configuration file path may be changed using the -datadir and -conf command-line arguments.
+{|
+! Operating System
+! Default PIVX datadir
+! Typical path to configuration file
+|-
+| Windows
+| %APPDATA%\PIVX\
+| C:\Users\username\AppData\Roaming\PIVX\pivx.conf
+|-
+| Linux
+| $HOME/.pivx/
+| /home/username/.pivx/pivx.conf
+|-
+| Mac OSX
+| $HOME/Library/Application Support/PIVX/
+| /Users/username/Library/Application Support/PIVX/pivx.conf
+|}
+
+Note: if running PIVX in testnet mode, the sub-folder "testnet4" will be appended to the data directory automatically.
+
+==Sample Pivx.conf==
+
+Copied from https://github.com/pivx-project/pivx/blob/master/contrib/debian/examples/pivx.conf:
+
+<pre>
+    ##
+    ## pivx.conf configuration file. Lines beginning with # are comments.
+    ##
+
+    # Network-related settings:
+
+    # Run on the test network instead of the real pivx network.
+    #testnet=0
+
+    # Run a regression test network
+    #regtest=0
+
+    # Connect via a SOCKS5 proxy
+    #proxy=127.0.0.1:9050
+
+    ##############################################################
+    ##            Quick Primer on addnode vs connect            ##
+    ##  Let's say for instance you use addnode=4.2.2.4          ##
+    ##  addnode will connect you to and tell you about the      ##
+    ##    nodes connected to 4.2.2.4.  In addition it will tell ##
+    ##    the other nodes connected to it that you exist so     ##
+    ##    they can connect to you.                              ##
+    ##  connect will not do the above when you 'connect' to it. ##
+    ##    It will *only* connect you to 4.2.2.4 and no one else.##
+    ##                                                          ##
+    ##  So if you're behind a firewall, or have other problems  ##
+    ##  finding nodes, add some using 'addnode'.                ##
+    ##                                                          ##
+    ##  If you want to stay private, use 'connect' to only      ##
+    ##  connect to "trusted" nodes.                             ##
+    ##                                                          ##
+    ##  If you run multiple nodes on a LAN, there's no need for ##
+    ##  all of them to open lots of connections.  Instead       ##
+    ##  'connect' them all to one node that is port forwarded   ##
+    ##  and has lots of connections.                            ##
+    ##       Thanks goes to [Noodle] on Freenode.               ##
+    ##############################################################
+
+    # Use as many addnode= settings as you like to connect to specific peers
+    #addnode=69.164.218.197
+    #addnode=10.0.0.2:51472
+
+    # Alternatively use as many connect= settings as you like to connect ONLY to specific peers
+    #connect=69.164.218.197
+    #connect=10.0.0.1:51472
+
+    # Listening mode, enabled by default except when 'connect' is being used
+    #listen=1
+
+    # Maximum number of inbound+outbound connections.
+    #maxconnections=
+
+    #
+    # JSON-RPC options (for controlling a running Pivx/pivxd process)
+    #
+
+    # server=1 tells Pivx-QT and pivxd to accept JSON-RPC commands
+    #server=0
+
+    # You must set rpcuser and rpcpassword to secure the JSON-RPC api
+    #rpcuser=Ulysseys
+    #rpcpassword=YourSuperGreatPasswordNumber_DO_NOT_USE_THIS_OR_YOU_WILL_GET_ROBBED_385593
+
+    # How many seconds pivx will wait for a complete RPC HTTP request.
+    # after the HTTP connection is established.
+    #rpctimeout=30
+
+    # By default, only RPC connections from localhost are allowed.
+    # Specify as many rpcallowip= settings as you like to allow connections from other hosts,
+    # either as a single IPv4/IPv6 or with a subnet specification.
+
+    # NOTE: opening up the RPC port to hosts outside your local trusted network is NOT RECOMMENDED,
+    # because the rpcpassword is transmitted over the network unencrypted.
+
+    # server=1 tells Pivx-QT to accept JSON-RPC commands.
+    # it is also read by pivxd to determine if RPC should be enabled
+    #rpcallowip=10.1.1.34/255.255.255.0
+    #rpcallowip=1.2.3.4/24
+    #rpcallowip=2001:db8:85a3:0:0:8a2e:370:7334/96
+
+    # Listen for RPC connections on this TCP port:
+    #rpcport=51473
+
+    # You can use Pivx or pivxd to send commands to Pivx/pivxd
+    # running on another host using this option:
+    #rpcconnect=127.0.0.1
+
+    # Miscellaneous options
+
+    # Pre-generate this many public/private key pairs, so wallet backups will be valid for
+    # both prior transactions and several dozen future transactions.
+    #keypool=100
+
+    # Pay an optional transaction fee every time you send PIVs.  Transactions with fees
+    # are more likely than free transactions to be included in generated blocks, so may
+    # be validated sooner.
+    #paytxfee=0.00
+
+    # User interface options
+
+    # Start Pivx minimized
+    #min=1
+
+    # Minimize to the system tray
+    #minimizetotray=1
+</pre>
+
+==Platforms==
+===Windows===
+
+====Start automatically====
+To configure the PIVX client to start automatically:
+
+You might use the configuration-file, or the GUI-Settings:
+
+Settings -> Options
+
+then mark the checkbox titled:
+ [X] Start PIVX on system startup
+
+
+
+====Batch automation====
+To work with batch, you have to start the daemon (pivxd.exe). The pivxd.exe run with option "-server" will respond with GUI-messages you are not able to process its answers.
+
+===Mac===
+
+
+===Linux===
+
+
+==See Also==
+
+* [[Data directory]]
