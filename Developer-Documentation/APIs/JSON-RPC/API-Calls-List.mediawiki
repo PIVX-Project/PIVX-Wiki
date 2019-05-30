@@ -255,7 +255,7 @@ If 'account' is specified, assign address to that account. || Y/N
 | <code>listtransactions</code> || [account] [count=10] [from=0] [includeWatchonly=false] || Returns up to [count] most recent transactions skipping the first [from] transactions for account [account]. If [account] not provided it'll return recent transactions from all accounts.
 || N
 |-
-| <code>listunspent</code> || [minconf=1] [maxconf=999999] ['["addresses",...]'] || Returns array of unspent transaction outputs with between minconf and maxconf (inclusive) confirmations. Optionally filter to only include txouts paid to specified addresses. || N
+| <code>listunspent</code> || [minconf=1] [maxconf=9999999] ['["addresses",...]'] || Returns array of unspent transaction outputs with between minconf and maxconf (inclusive) confirmations. Optionally filter to only include txouts paid to specified addresses. || N
 |-
 | <code>lockunspent</code> || &lt;unlock&gt; &lt;'[{"txid":"txid","vout":n},...]'&gt; || Updates list of temporarily unspendable outputs. || Y
 |-
