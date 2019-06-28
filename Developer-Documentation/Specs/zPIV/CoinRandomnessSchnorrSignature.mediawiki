@@ -1,0 +1,93 @@
+<div align="center">
+==PublicCoinSpend v4 - Coin Randomness Schnorr Signature==
+</div>
+
+=== Abstract ===
+This document describes a new type of PublicCoinSpend, marked with version number '''4'''.
+
+=== Motivation ===
+The [https://github.com/PIVX-Project/PIVX/pull/891 PublicCoinSpend] class was introduced (with version '''3''') subclassing the (version '''2''') <code>CoinSpend</code> libzerocoin class, after the recent Zerocoin exploits in order to by-pass the broken P1 proof.<br>
+This came at the cost of the zerocoin protocol privacy. As the name suggests, in fact, <code>PublicCoinSpend</code>s are not private.
+
+This de-anonymized spend process happens in the following way:
+* each input reveals the mint transaction output (containing the public coin value ''C'') referencing the previous outpoint, just like regular basecoin transactions reference UTXOs in their inputs.
+* the input scriptSig starts with a new opcode <code>OP_ZEROCOINPUBLICSPEND</code> ('''0xc3''') and contains the zerocoin secrets (serial number ''S'' and randomness ''v'').
+* the transaction outputs are signed with the coin's private key.
+The verifier checks that the minted coin ''C'', referenced by the spend input, is indeed a commitment to the secrets published in the input script (''C = ''Comm''(S,v)''), that the serial number ''S'' was not already spent and lastly verifies the signature.
+
+This approach presents a serious issue if applied to version 1 zerocoins since they have no keypair associated to them.<br>
+Without the signature, in fact, the present scheme is trivially vulnerable to [https://en.wikipedia.org/wiki/Man-in-the-middle_attack man-in-the-middle attacks].
+
+So a different approach is required for spending version 1 zPIVs.<br>
+The solution proposed in this document offers an additional layer of protection to v2 zerocoins too for a little added communication cost ('''version 4''' spend inputs are only 32 bytes bigger than those of '''version 3''').
+
+=== Overview ===
+A naive solution to the problem would be to leverage the zerocoin library <code>SerialNumberSignatureOfKnowledge</code> and publish it along with the commitment to the coin, ''y'', and the commitment randomness, ''R''. <br>
+The verifier should check that ''y = ''Comm''(C, R)'' and then use ''y'' to verify the signature of knowledge.
+
+On one hand this would be highly expensive in terms of performance (making spends production and verification slower by orders of magnitude) and communication costs (adding about 20kB of overhead to each spend). On the other, it would also be redundant, as revealing the public coin value defeats the purpose of having a Zero-Knowledge signature of knowledge and a commitment to the coin.
+
+An alternative solution is offered by the protocol described here, which allows the spender to prove knowledge of the secret randomness ''v'' without publishing it, thus fixing the malleability issue affecting the previous version.
+
+The basic idea is to create a [https://tools.ietf.org/html/rfc8235 Schnorr signature] over the hash of the transaction outputs using the coin randomness as private key.
+
+=== Rationale ===
+The following observations make the adoption of the Schnorr signature algorithm a convincing solution.
+* The <code>coinCommitmentgroup</code> is a Schnorr group having modulus ''p'' of 1024 bits (thus in which the discrete logarithm problem can be safely assumed to be hard) and order ''q'' of 256 bits (making dSHA256 a convenient choice for hash function).
+* The coin randomness is a random element in the allowed group ''Zq'' (thus can be used as private signing key, ''sk'', in the Schnorr algorithm).
+* The verifier can compute the public verification key ''pk'' (''= h^v mod p'') from the data already at his disposal (public zerocoin parameters, public coin value, coin serial number) thus no further overhead is needed on the script beside the signature (which is already very short: only twice the size of the coin randomness).
+
+<div align="center"><img src="https://latex.codecogs.com/gif.latex?sk%20%3A%3D%20v%20%5Censpace%5Censpace%5Censpace%20%5Censpace%5Censpace%5Censpace%5Censpace%5Censpace%20pk%3A%3Dh%5Ev%20%5Cmod%20p%20%3D%20g%5E%7B-S%7DC%20%5Cmod%20p"/></div>
+
+=== Signature Algorithm ===
+The following pseudocode shows the signature and verification algorithms (as usual &boxV; denotes concatenation of binary strings):
+
+'''''Signature'''''
+ inputs:    <- (p, q, h) -- zerocoin params: modulus, order and generator of coinCommitmentGroup
+            <- M -- message to sign: ptxHash
+            <- v -- coin randomness
+ --------------------------------------------
+ 1- set k <-- random secret element in Zq
+ 2- r = h^k mod p
+ 3- alpha = Hash(zcparams ║ r ║ M) mod q
+ 4- beta = (k - v * alphha) mod q
+ --------------------------------------------
+ outputs:   -> (alpha, beta) -- signature components
+
+
+'''''Verification'''''
+ inputs:    <- (p, q, g, h)  -- zerocoin params: modulus, order and generators of coinCommitmentGroup
+            <- (alpha, beta) -- signature components
+            <- M -- message to sign: ptxHash
+            <- C -- public coin value
+            <- S -- coin serial number
+ --------------------------------------------
+ 1- pk = C * g^{-S} mod p
+ 2- rv = (pk^alpha) * (h^beta) mod p
+ 3- result = {alpha == Hash(zcparams ║ rv ║ M) mod q}
+ --------------------------------------------
+ output:    -> result -- verification outcome: true, false
+.
+
+
+=== Specification ===
+The following table shows the structure of the PublicCoinSpend v4 input script:
+
+{|class="wikitable"
+! Field !! Type !! Size (bytes) !! Notes
+|-
+| OP_ZEROCOINPUBLICSPEND || <code>uint8_t</code> || 1 || value = 195 (c3)
+|-
+| CoinSpend Version || <code>uint8_t</code> || 1 || value = 4 after enforcement
+|-
+| Coin SerialNumber || <code>CBigNum</code> || 32 || &nbsp;
+|-
+| Schnorr Signature || <code>CoinRandomnessSchnorrSignature</code> || 64 || &nbsp;
+|-
+| Coin PublicKey || <code>CPubKey</code> || 32 || only for v2+ zerocoins
+|-
+| vchSig || <code>vector<unsigned char></code> || 73 || only for v2+ zerocoins
+|}
+
+=== Reference Implementation ===
+https://github.com/random-zebra/PIVX/tree/2019_randomness-schnorr
