@@ -5,8 +5,8 @@
 === Abstract ===
 This document describes a new type of PublicCoinSpend, marked with version number '''4'''.
 
-=== Motivation ===
-The [https://github.com/PIVX-Project/PIVX/pull/891 PublicCoinSpend] class was introduced (with version '''3''') subclassing the (version '''2''') <code>CoinSpend</code> class, after the recent libzerocoin exploits in order to by-pass the broken P1 proof.<br>
+=== Background ===
+The [https://github.com/PIVX-Project/PIVX/pull/891 PublicCoinSpend] class was introduced (with version '''3''') subclassing the (version '''2''') <code>CoinSpend</code> class, after the recent libzerocoin exploits in order to bypass the broken P1 proof.<br>
 This came at the cost of the Zerocoin protocol privacy. As the name suggests, in fact, <code>PublicCoinSpend</code>s are not private.
 
 This de-anonymized spend process happens in the following way:
@@ -15,11 +15,30 @@ This de-anonymized spend process happens in the following way:
 * the transaction outputs are signed with the coin's private key.
 The verifier checks that the minted coin ''C'', referenced by the spend input, is indeed a commitment to the secrets published in the input script (''C = ''Comm''(S,v)''), that the serial number ''S'' was not already spent, and lastly verifies the signature.
 
+The following table shows the structure of the PublicCoinSpend v3 input script:
+
+{|class="wikitable"
+! Field !! Type !! Max Size (bytes) !! Notes
+|-
+| OP_ZEROCOINPUBLICSPEND || <code>uint8_t</code> || 1 || value = 195 (c3)
+|-
+| CoinSpend Version || <code>uint8_t</code> || 1 || value = 3
+|-
+| Coin SerialNumber || <code>CBigNum</code> || 32 || &nbsp;
+|-
+| Coin Randomness || <code>CoinRandomnessSchnorrSignature</code> || 32 || &nbsp;
+|-
+| Coin PublicKey || <code>CPubKey</code> || 32 || &nbsp;
+|-
+| vchSig || <code>vector<unsigned char></code> || 73 || &nbsp;
+|}
+
+=== Motivation ===
 This approach presents a serious issue if applied to version 1 zerocoins since they have no keypair associated with them.<br>
 Without the signature, in fact, the present scheme is trivially vulnerable to [https://en.wikipedia.org/wiki/Man-in-the-middle_attack man-in-the-middle attacks].
 
 So a different approach is required for spending version 1 zPIVs.<br>
-The solution proposed in this document offers an additional layer of protection to v2 zerocoins too for a little added communication cost ('''version 4''' spend inputs are only 32 bytes bigger than those of '''version 3''').
+The solution proposed in this document offers an additional layer of protection to v2 zerocoins too for a little added communication cost ('''version 4''' spend inputs are in fact about the same size of those of '''version 3''').
 
 === Overview ===
 A naive solution to the problem would be to leverage the libzerocoin <code>SerialNumberSignatureOfKnowledge</code> and publish it along with the commitment to the coin, ''y'', and the commitment randomness, ''R''. <br>
@@ -69,24 +88,32 @@ The following pseudocode shows the signature and verification algorithms (as usu
  output:    -> result -- verification outcome: true, false
 .
 
+=== Additional Changes ===
+Another proposed change in this version is to remove the coin serial number for v2 coins from the serialization.
+For version 2 zerocoins, in fact, the serial number is deterministically computable from the coin public key and, being the public key already part of the serialized object, there is no need to add further overhead (just one byte for the coin version).
+Also, in this way, the verifier doesn't need to check that the coin serial number and the hashed public key match since the former is derived from the latter in the constructor.
+
+Therefore, saving 32 bytes of the coin randomness and 32 bytes of the coin serial number, allows us to add the 64 bytes of the Schnorr signature while keeping the same size as previous version.
 
 === Specification ===
 The following table shows the structure of the PublicCoinSpend v4 input script:
 
 {|class="wikitable"
-! Field !! Type !! Size (bytes) !! Notes
+! Field !! Type !! Max Size (bytes) !! Notes
 |-
 | OP_ZEROCOINPUBLICSPEND || <code>uint8_t</code> || 1 || value = 195 (c3)
 |-
 | CoinSpend Version || <code>uint8_t</code> || 1 || value = 4 after enforcement
 |-
-| Coin SerialNumber || <code>CBigNum</code> || 32 || &nbsp;
+| Coin Version || <code>uint8_t</code> || 1 || value = 1 or 2 (for v1 or v2 coins)
+|-
+| Coin SerialNumber || <code>CBigNum</code> || 32 || only for v1 zerocoins
+|-
+| Coin PublicKey || <code>CPubKey</code> || 32 || only for v2 zerocoins
+|-
+| vchSig || <code>vector<unsigned char></code> || 73 || only for v2 zerocoins
 |-
 | Schnorr Signature || <code>CoinRandomnessSchnorrSignature</code> || 64 || &nbsp;
-|-
-| Coin PublicKey || <code>CPubKey</code> || 32 || only for v2+ zerocoins
-|-
-| vchSig || <code>vector<unsigned char></code> || 73 || only for v2+ zerocoins
 |}
 
 === Reference Implementation ===
